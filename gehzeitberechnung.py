@@ -21,16 +21,17 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
+from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, QVariant
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction
+from qgis.PyQt.QtWidgets import QAction, QMessageBox
+from qgis.core import QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsProject, QgsField, QgsWkbTypes
 
-# Initialize Qt resources from file resources.py
+# Initialize Qt resources from file resSources.py
 from .resources import *
 # Import the code for the dialog
 from .gehzeitberechnung_dialog import GehzeitberechnungDialog
 import os.path
-
+from .api import fetch_hiking_data
 
 class Gehzeitberechnung:
     """QGIS Plugin Implementation."""
@@ -45,6 +46,26 @@ class Gehzeitberechnung:
         """
         # Save reference to the QGIS interface
         self.iface = iface
+
+        self.field_mapping = {
+            "weg_laenge": "Zusammenfassung.Laenge 2D",
+            "laenge_3d": "Zusammenfassung.Laenge 3D",
+            # "Anzahl Teilgeometrien": "Zusammenfassung.Anzahl Teilgeometrien",
+            "steig_max": "Zusammenfassung.Maximale Steigung",
+            "hm_auf_ri": "Zusammenfassung.Hoehenmeter Aufstieg",
+            "hm_auf_gri": "Zusammenfassung.Hoehenmeter Abstieg",
+            # "Berechnungsmethode": "Gehzeiten (min).Berechnungsmethode",
+            # "Gehzeit gesamt hin und zurueck": "Gehzeiten (min).Gehzeit gesamt hin und zurueck", 
+            "ber_gz_ri": "Gehzeiten (min).Gehzeit gesamt hin",
+            "ber_gz_geg": "Gehzeiten (min).Gehzeit gesamt zurueck"
+            # "Marschzeit gesamt hin und zurueck": "Gehzeiten (min).Marschzeit gesamt hin und zurueck" 
+            # "Marschzeit gesamt hin": "Gehzeiten (min).Marschzeit gesamt hin" -> ber_gz_ri
+            # "Marschzeit gesamt zurueck": "Gehzeiten (min).Marschzeit gesamt zurueck" -> ber_gz_geg
+            # "Gehzeit je Teilgeometrie": "Gehzeiten (min).Gehzeit je Teilgeometrie"
+            # "Datengrundlage": "Zusammenfassung.Datengrundlage",
+            # "Voibos": "Zusammenfassung.Voibos",
+        }
+        
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
         # initialize locale
@@ -179,6 +200,21 @@ class Gehzeitberechnung:
                 action)
             self.iface.removeToolBarIcon(action)
 
+    def get_nested_value(self, d, keys):
+        for key in keys:
+            if isinstance(d, dict):
+                d = d.get(key, None)
+            else:
+                return None
+        return d
+
+    def add_missing_fields(self, layer):
+        layer.startEditing()
+        for field_name in self.field_mapping.keys():
+            if layer.fields().indexFromName(field_name) == -1:
+                layer.dataProvider().addAttributes([QgsField(field_name, QVariant.Double)])
+        layer.updateFields()
+        layer.commitChanges()
 
     def run(self):
         """Run method that performs all the real work"""
@@ -194,7 +230,49 @@ class Gehzeitberechnung:
         # Run the dialog event loop
         result = self.dlg.exec_()
         # See if OK was pressed
-        if result:
+        if not result:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
-            pass
+            return 
+        
+        url = "https://voibos.rechenraum.com/voibos/voibos"
+        method = "viia"
+        crs = "31254"
+
+        layer = self.iface.activeLayer()
+        if not layer or layer.geometryType() != QgsWkbTypes.LineGeometry:
+            QMessageBox.warning(None, "Error", "Please select a line layer")
+            return
+
+        self.add_missing_fields(layer)
+
+        features = layer.selectedFeatures() or layer.getFeatures()
+        layer.startEditing()
+
+        for feature in features:
+            fid = feature.id()
+            print(f"Processing feature {fid}")
+
+            before_values = {field: feature[field] for field in self.field_mapping.keys() if field in feature.fields().names()}
+            print(f"Feature {fid} BEFORE: {before_values}")
+
+            geom = feature.geometry()
+            geom.transform(QgsCoordinateTransform(layer.crs(), QgsCoordinateReferenceSystem(crs), QgsProject.instance()))
+            wkt = geom.asWkt()
+
+            result = fetch_hiking_data(wkt, crs, method, url)
+            if not result:
+                print(f"Feature {fid}: API call failed")
+                continue
+
+        for field_name, path in self.field_mapping.items():
+            value = self.get_nested_value(result, path.split('.'))
+            feature[field_name] = value
+
+        layer.updateFeature(feature)
+
+        after_values = {field: feature[field] for field in self.field_mapping.keys() if field in feature.fields().names()}
+        print(f"Feature {fid} AFTER: {after_values}")
+
+        layer.commitChanges()
+        QMessageBox.information(None, "Finished", "Calculation completed.")
