@@ -265,14 +265,14 @@ class Gehzeitberechnung:
                 print(f"Feature {fid}: API call failed")
                 continue
 
-        for field_name, path in self.field_mapping.items():
-            value = self.get_nested_value(result, path.split('.'))
-            feature[field_name] = value
+            for field_name, path in self.field_mapping.items():
+                value = self.get_nested_value(result, path.split('.'))
+                feature[field_name] = value
 
-        layer.updateFeature(feature)
+            layer.updateFeature(feature)
 
-        after_values = {field: feature[field] for field in self.field_mapping.keys() if field in feature.fields().names()}
-        print(f"Feature {fid} AFTER: {after_values}")
+            after_values = {field: feature[field] for field in self.field_mapping.keys() if field in feature.fields().names()}
+            print(f"Feature {fid} AFTER: {after_values}")
 
         layer.commitChanges()
         QMessageBox.information(None, "Finished", "Calculation completed.")

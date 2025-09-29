@@ -7,17 +7,18 @@ from qgis.PyQt.QtNetwork import QNetworkRequest, QNetworkReply
 
 def fetch_hiking_data(wkt_text, crs, method, url, timeout=30):
     """
-    Fetch hiking data from a web service using QGIS network manager.
+    Function to fetch hiking data from the given web service.
     
     Args:
-        wkt_text (str): WKT geometry
-        crs (str): CRS identifier
-        method (str): Calculation method
-        url (str): API endpoint
-        timeout (int): Request timeout in seconds
-
+        wkt_text (str): The WKT (Well-Known Text) representation of geometry
+        crs (str): Coordinate Reference System identifier
+        method (str): The calculation method to use
+        url (str): The API endpoint URL
+        timeout (int, optional): Timeout in seconds for the request. Defaults to 30.
+        use_requests (bool, optional): Use requests library instead of urllib. Defaults to True.
+        
     Returns:
-        dict or None: JSON response or None if failed
+        dict or None: The JSON response data if successful, None otherwise
     """
     post_data = {
         "name": "wegzeit",
