@@ -50,20 +50,11 @@ class Gehzeitberechnung:
         self.field_mapping = {
             "weg_laenge": "Zusammenfassung.Laenge 2D",
             "laenge_3d": "Zusammenfassung.Laenge 3D",
-            # "Anzahl Teilgeometrien": "Zusammenfassung.Anzahl Teilgeometrien",
             "steig_max": "Zusammenfassung.Maximale Steigung",
             "hm_auf_ri": "Zusammenfassung.Hoehenmeter Aufstieg",
             "hm_auf_gri": "Zusammenfassung.Hoehenmeter Abstieg",
-            # "Berechnungsmethode": "Gehzeiten (min).Berechnungsmethode",
-            # "Gehzeit gesamt hin und zurueck": "Gehzeiten (min).Gehzeit gesamt hin und zurueck", 
             "ber_gz_ri": "Gehzeiten (min).Gehzeit gesamt hin",
             "ber_gz_geg": "Gehzeiten (min).Gehzeit gesamt zurueck"
-            # "Marschzeit gesamt hin und zurueck": "Gehzeiten (min).Marschzeit gesamt hin und zurueck" 
-            # "Marschzeit gesamt hin": "Gehzeiten (min).Marschzeit gesamt hin" -> ber_gz_ri
-            # "Marschzeit gesamt zurueck": "Gehzeiten (min).Marschzeit gesamt zurueck" -> ber_gz_geg
-            # "Gehzeit je Teilgeometrie": "Gehzeiten (min).Gehzeit je Teilgeometrie"
-            # "Datengrundlage": "Zusammenfassung.Datengrundlage",
-            # "Voibos": "Zusammenfassung.Voibos",
         }
         
         # initialize plugin directory
