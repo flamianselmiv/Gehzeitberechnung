@@ -48,13 +48,13 @@ class Gehzeitberechnung:
         self.iface = iface
 
         self.field_mapping = {
-            "weg_laenge": "Zusammenfassung.Laenge 2D",
-            "laenge_3d": "Zusammenfassung.Laenge 3D",
-            "steig_max": "Zusammenfassung.Maximale Steigung",
-            "hm_auf_ri": "Zusammenfassung.Hoehenmeter Aufstieg",
-            "hm_auf_gri": "Zusammenfassung.Hoehenmeter Abstieg",
-            "ber_gz_ri": "Gehzeiten (min).Gehzeit gesamt hin",
-            "ber_gz_geg": "Gehzeiten (min).Gehzeit gesamt zurueck"
+            "weg_laenge": {"path": "Zusammenfassung.Laenge 2D", "type": "double"},  
+            "laenge_3d": {"path": "Zusammenfassung.Laenge 3D", "type": "double"},   
+            "steig_max": {"path": "Zusammenfassung.Maximale Steigung", "type": "integer"},  
+            "hm_auf_ri": {"path": "Zusammenfassung.Hoehenmeter Aufstieg", "type": "integer"},   
+            "hm_auf_gri": {"path": "Zusammenfassung.Hoehenmeter Abstieg", "type": "integer"},   
+            "ber_gz_ri": {"path": "Gehzeiten (min).Gehzeit gesamt hin", "type": "integer"},  
+            "ber_gz_geg": {"path": "Gehzeiten (min).Gehzeit gesamt zurueck", "type": "integer"},  
         }
         
         # initialize plugin directory
@@ -201,11 +201,26 @@ class Gehzeitberechnung:
 
     def add_missing_fields(self, layer):
         layer.startEditing()
-        for field_name in self.field_mapping.keys():
+        for field_name, field_info in self.field_mapping.items():
+            # exists = layer.fields().indexFromName(field_name) != -1
+            # print(f"Field {field_name} exists? {exists}")
+
             if layer.fields().indexFromName(field_name) == -1:
-                layer.dataProvider().addAttributes([QgsField(field_name, QVariant.Double)])
+                field_type = field_info.get("type", "string")
+
+                if field_type == "double":
+                    qvariant_type = QVariant.Double
+                elif field_type == "integer":
+                    qvariant_type = QVariant.Int
+
+                new_field = QgsField(field_name, qvariant_type)
+                layer.dataProvider().addAttributes([new_field])
         layer.updateFields()
         layer.commitChanges()
+
+        # print("Fields after update:")
+        # for f in layer.fields():
+        #     print(f" {f.name()} -> {f.typeName()}")
 
     def run(self):
         """Run method that performs all the real work"""
@@ -256,9 +271,21 @@ class Gehzeitberechnung:
                 print(f"Feature {fid}: API call failed")
                 continue
 
-            for field_name, path in self.field_mapping.items():
-                value = self.get_nested_value(result, path.split('.'))
+            for field_name, field_info in self.field_mapping.items():
+                value = self.get_nested_value(result, field_info["path"].split('.'))
+
+                if value is not None:
+                    if field_info["type"] == "double":
+                        value = float(value)
+                    elif field_info["type"] == "integer":
+                        value = int(value)
+                    else:
+                        print(f"Unknown field type {field_info['type']} for field {field_name}")
+                        continue
+
                 feature[field_name] = value
+
+                # print(f"{field_name}: value={value} (type={type(value).__name__})")
 
             layer.updateFeature(feature)
 
