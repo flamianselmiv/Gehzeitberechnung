@@ -71,6 +71,8 @@ class Gehzeitberechnung:
             self.translator.load(locale_path)
             QCoreApplication.installTranslator(self.translator)
 
+        self.dlg = GehzeitberechnungDialog()
+
         # Declare instance attributes
         self.actions = []
         self.menu = self.tr(u'&Gehzeitberechnung')
@@ -93,7 +95,6 @@ class Gehzeitberechnung:
         """
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('Gehzeitberechnung', message)
-
 
     def add_action(
         self,
@@ -182,7 +183,6 @@ class Gehzeitberechnung:
         # will be set False in run()
         self.first_start = True
 
-
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
@@ -222,37 +222,28 @@ class Gehzeitberechnung:
         # for f in layer.fields():
         #     print(f" {f.name()} -> {f.typeName()}")
 
-    def run(self):
-        """Run method that performs all the real work"""
+    def calculate_features(self, only_selected=True):
+        """Perform the hiking time calculation for selected or all features."""
 
-        # Create the dialog with elements (after translation) and keep reference
-        # Only create GUI ONCE in callback, so that it will only load when the plugin is started
-        if self.first_start == True:
-            self.first_start = False
-            self.dlg = GehzeitberechnungDialog()
-
-        # show the dialog
-        self.dlg.show()
-        # Run the dialog event loop
-        result = self.dlg.exec_()
-        # See if OK was pressed
-        if not result:
-            # Do something useful here - delete the line containing pass and
-            # substitute with your code.
-            return 
-        
         url = "https://voibos.rechenraum.com/voibos/voibos"
         method = "viia"
         crs = "31254"
 
         layer = self.iface.activeLayer()
         if not layer or layer.geometryType() != QgsWkbTypes.LineGeometry:
-            QMessageBox.warning(None, "Error", "Please select a line layer")
+            QMessageBox.warning(None, "Fehler", "Bitte eine Linien-Layer auswählen.")
             return
 
         self.add_missing_fields(layer)
 
-        features = layer.selectedFeatures() or layer.getFeatures()
+        if only_selected:
+            features = layer.selectedFeatures()
+            if not features:
+                QMessageBox.warning(None, "Hinweis", "Keine ausgewählten Objekte gefunden.")
+                return
+        else:
+            features = layer.getFeatures()
+
         layer.startEditing()
 
         for feature in features:
@@ -285,12 +276,43 @@ class Gehzeitberechnung:
 
                 feature[field_name] = value
 
-                # print(f"{field_name}: value={value} (type={type(value).__name__})")
-
             layer.updateFeature(feature)
-
             after_values = {field: feature[field] for field in self.field_mapping.keys() if field in feature.fields().names()}
             print(f"Feature {fid} AFTER: {after_values}")
 
         layer.commitChanges()
-        QMessageBox.information(None, "Finished", "Calculation completed.")
+        QMessageBox.information(None, "Fertig", "Berechnung abgeschlossen.")
+
+
+    def run(self):
+        """Run method that performs all the real work."""
+
+        # Create the dialog with elements (after translation) and keep reference
+        # Only create GUI ONCE in callback, so that it will only load when the plugin is started
+        # if self.first_start == True:
+        #     self.first_start = False
+        #     self.dlg = GehzeitberechnungDialog()
+
+        # disconnect previous connections to avoid multiple triggers
+        try:
+            self.dlg.calculate_selected_clicked.disconnect()
+        except Exception:
+            pass
+        try:
+            self.dlg.calculate_all_clicked.disconnect()
+        except Exception:
+            pass
+
+        self.dlg.calculate_selected_clicked.connect(lambda: self.calculate_features(only_selected=True))
+        self.dlg.calculate_all_clicked.connect(lambda: self.calculate_features(only_selected=False))
+
+        # show the dialog
+        self.dlg.show()
+        # Run the dialog event loop
+        result = self.dlg.exec_()
+        # See if OK was pressed
+        if not result:
+            # Do something useful here - delete the line containing pass and
+            # substitute with your code.
+            return 
+        
