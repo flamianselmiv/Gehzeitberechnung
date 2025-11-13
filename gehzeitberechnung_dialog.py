@@ -44,6 +44,10 @@ class GehzeitberechnungDialog(QtWidgets.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.pushButton_cancel.clicked.connect(self.reject)
-        # self.ui.pushButton_calculate_selected.clicked.connect(self.calculate_selected)
-        # self.ui.pushButton_calculate_all.clicked.connect(self.calculate_all)
+        self.pushButton_calculate_selected.clicked.connect(self.on_calculate_selected_clicked)
+
+    def on_calculate_selected_clicked(self):
+        """Emit custom signal when 'Berechnen' is clicked."""
+        
+        self.calculate_selected_clicked.emit()
 
