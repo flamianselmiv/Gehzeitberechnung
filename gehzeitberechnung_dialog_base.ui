@@ -1,67 +1,128 @@
-<ui version="4.0" >
- <class>GehzeitberechnungDialogBase</class>
- <widget class="QDialog" name="GehzeitberechnungDialogBase" >
-  <property name="geometry" >
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>400</width>
-    <height>300</height>
-   </rect>
-  </property>
-  <property name="windowTitle" >
-   <string>Gehzeitberechnung</string>
-  </property>
-  <widget class="QDialogButtonBox" name="button_box" >
-   <property name="geometry" >
-    <rect>
-     <x>30</x>
-     <y>240</y>
-     <width>341</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="orientation" >
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons" >
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
- </widget>
- <resources/>
- <connections>
-  <connection>
-   <sender>button_box</sender>
-   <signal>accepted()</signal>
-   <receiver>GehzeitberechnungDialogBase</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="source_label" >
-     <x>248</x>
-     <y>254</y>
-    </hint>
-    <hint type="destination_label" >
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>button_box</sender>
-   <signal>rejected()</signal>
-   <receiver>GehzeitberechnungDialogBase</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="source_label" >
-     <x>316</x>
-     <y>260</y>
-    </hint>
-    <hint type="destination_label" >
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+<ui version="4.0">
+    <class>GehzeitberechnungDialogBase</class>
+    <widget class="QDialog" name="GehzeitberechnungDialogBase">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>400</width>
+                <height>300</height>
+            </rect>
+        </property>
+        <property name="windowTitle">
+            <string>Gehzeitberechnung</string>
+        </property>
+
+        <widget class="QLabel" name="label_4">
+            <property name="geometry">
+                <rect>
+                    <x>20</x>
+                    <y>0</y>
+                    <width>371</width>
+                    <height>31</height>
+                </rect>
+            </property>
+            <property name="font">
+                <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                </font>
+            </property>
+            <property name="text">
+                <string>Lorem ipsum dolor sit amet</string>
+            </property>
+        </widget>
+
+        <!-- <widget class="QComboBox" name="comboBox">
+            <property name="geometry">
+                <rect>
+                    <x>40</x>
+                    <y>170</y>
+                    <width>341</width>
+                    <height>20</height>
+                </rect>
+            </property>
+        </widget> -->
+
+        <widget class="QLabel" name="label_5">
+            <property name="geometry">
+                <rect>
+                    <x>20</x>
+                    <y>20</y>
+                    <width>381</width>
+                    <height>51</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;consetetur sadipscing elitr, sed diam nonumy eirmod&lt;br/&gt; tempor invidunt ut labore et dolore magna aliquyam erat,&lt;br/&gt;sed diam voluptua&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+        </widget>
+
+        <widget class="QCheckBox" name="checkBox_nur_nicht_Grenzkataster">
+            <property name="geometry">
+                <rect>
+                    <x>20</x>
+                    <y>77</y>
+                    <width>371</width>
+                    <height>21</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Select all features of the current layer.</string>
+            </property>
+            <property name="tristate">
+                <bool>false</bool>
+            </property>
+        </widget>
+
+        <widget class="QWidget" name="button_container">
+            <property name="geometry">
+                <rect>
+                    <x>30</x>
+                    <y>240</y>
+                    <width>341</width>
+                    <height>32</height>
+                </rect>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_buttons">
+                <item>
+                    <widget class="QPushButton" name="pushButton_calculate_all">
+                        <property name="text">
+                            <string>Alles berechnen</string>
+                        </property>
+                    </widget>
+                </item>
+                <item>
+                    <widget class="QPushButton" name="pushButton_calculate_selected">
+                        <property name="text">
+                            <string>Berechnen</string>
+                        </property>
+                    </widget>
+                </item>
+                <item>
+                    <spacer name="horizontalSpacer">
+                        <property name="orientation">
+                            <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                            <size>
+                                <width>40</width>
+                                <height>20</height>
+                            </size>
+                        </property>
+                    </spacer>
+                </item>
+                <item>
+                    <widget class="QPushButton" name="pushButton_cancel">
+                        <property name="text">
+                            <string>Abbrechen</string>
+                        </property>
+                    </widget>
+                </item>
+            </layout>
+        </widget>
+
+    </widget>
+
+    <resources/>
 </ui>
