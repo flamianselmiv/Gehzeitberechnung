@@ -25,15 +25,17 @@
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt import QtWidgets
+from qgis.PyQt import QtWidgets, QtCore
 # from qgis.PyQt.QtWidgets import QDialog, QPushButton
 
 # This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'gehzeitberechnung_dialog_base.ui'))
 
-
 class GehzeitberechnungDialog(QtWidgets.QDialog, FORM_CLASS):
+    calculate_selected_clicked = QtCore.pyqtSignal()
+    calculate_all_clicked = QtCore.pyqtSignal()
+    
     def __init__(self, parent=None):
         """Constructor."""
         super(GehzeitberechnungDialog, self).__init__(parent)
@@ -43,11 +45,25 @@ class GehzeitberechnungDialog(QtWidgets.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+
         self.pushButton_cancel.clicked.connect(self.reject)
         self.pushButton_calculate_selected.clicked.connect(self.on_calculate_selected_clicked)
+        self.pushButton_calculate_all.clicked.connect(self.on_calculate_all_clicked)
+
+        self.pushButton_calculate_all.setEnabled(False) # button disabled by default
+
+        self.checkBox_nur_nicht_Grenzkataster.stateChanged.connect(self.on_checkbox_state_changed)  # enable/disable based on checkbox
 
     def on_calculate_selected_clicked(self):
         """Emit custom signal when 'Berechnen' is clicked."""
         
         self.calculate_selected_clicked.emit()
 
+    def on_calculate_all_clicked(self):
+        """Emit signal for 'Alles berechnen' button."""
+        self.calculate_all_clicked.emit()
+
+    def on_checkbox_state_changed(self, state):
+        """Enable/disable the 'Alles berechnen' button."""
+        is_checked = state == QtCore.Qt.Checked
+        self.pushButton_calculate_all.setEnabled(is_checked)

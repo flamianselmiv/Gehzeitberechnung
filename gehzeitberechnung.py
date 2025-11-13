@@ -96,7 +96,6 @@ class Gehzeitberechnung:
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('Gehzeitberechnung', message)
 
-
     def add_action(
         self,
         icon_path,
@@ -184,7 +183,6 @@ class Gehzeitberechnung:
         # will be set False in run()
         self.first_start = True
 
-
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:
@@ -192,12 +190,6 @@ class Gehzeitberechnung:
                 self.tr(u'&Gehzeitberechnung'),
                 action)
             self.iface.removeToolBarIcon(action)
-
-    # def calculate_selected(self):
-    #     print("Calculate selected clicked")
-
-    # def calculate_all(self):
-    #     print("Calculate all clicked")
 
     def get_nested_value(self, d, keys):
         for key in keys:
@@ -293,7 +285,7 @@ class Gehzeitberechnung:
 
 
     def run(self):
-        """Run method that performs all the real work"""
+        """Run method that performs all the real work."""
 
         # Create the dialog with elements (after translation) and keep reference
         # Only create GUI ONCE in callback, so that it will only load when the plugin is started
@@ -301,11 +293,19 @@ class Gehzeitberechnung:
         #     self.first_start = False
         #     self.dlg = GehzeitberechnungDialog()
 
-        self.dlg.pushButton_calculate_selected.clicked.disconnect()
-        self.dlg.pushButton_calculate_selected.clicked.connect(lambda: self.calculate_features(only_selected=True))
-        self.dlg.pushButton_cancel.clicked.disconnect()
-        self.dlg.pushButton_cancel.clicked.connect(self.dlg.reject)
-        
+        # disconnect previous connections to avoid multiple triggers
+        try:
+            self.dlg.calculate_selected_clicked.disconnect()
+        except Exception:
+            pass
+        try:
+            self.dlg.calculate_all_clicked.disconnect()
+        except Exception:
+            pass
+
+        self.dlg.calculate_selected_clicked.connect(lambda: self.calculate_features(only_selected=True))
+        self.dlg.calculate_all_clicked.connect(lambda: self.calculate_features(only_selected=False))
+
         # show the dialog
         self.dlg.show()
         # Run the dialog event loop
