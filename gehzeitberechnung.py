@@ -262,6 +262,8 @@ class Gehzeitberechnung:
                 print(f"Feature {fid}: API call failed")
                 continue
 
+            update_activated = self.dlg.checkBox_update_table.isChecked()
+
             for field_name, field_info in self.field_mapping.items():
                 value = self.get_nested_value(result, field_info["path"].split('.'))
 
@@ -274,9 +276,13 @@ class Gehzeitberechnung:
                         print(f"Unknown field type {field_info['type']} for field {field_name}")
                         continue
 
+                print(f"{field_name}: {value}")
+
                 feature[field_name] = value
 
-            layer.updateFeature(feature)
+            if update_activated:
+                layer.updateFeature(feature)
+
             after_values = {field: feature[field] for field in self.field_mapping.keys() if field in feature.fields().names()}
             print(f"Feature {fid} AFTER: {after_values}")
 
