@@ -78,6 +78,41 @@
             </property>
         </widget>
 
+        <widget class="QGroupBox" name="groupBox_field_mapping">
+            <property name="geometry">
+                <rect>
+                    <x>20</x>
+                    <y>133</y>
+                    <width>361</width>
+                    <height>120</height>
+                </rect>
+            </property>
+            <property name="title">
+                <string>Feldzuordnung</string>
+            </property>
+            <property name="visible">
+                <bool>false</bool>
+            </property>
+
+            <layout class="QFormLayout" name="formLayout_field_mapping">
+                <property name="labelAlignment">
+                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                </property>
+
+                <item row="0" column="0">
+                    <widget class="QLabel" name="label_mapping_slope">
+                        <property name="text">
+                            <string>Steigung</string>
+                        </property>
+                    </widget>
+                </item>
+                <item row="0" column="1">
+                    <widget class="QComboBox" name="combo_target_slope"/>
+                </item>
+
+            </layout>
+        </widget>
+
         <widget class="QWidget" name="button_container">
             <property name="geometry">
                 <rect>

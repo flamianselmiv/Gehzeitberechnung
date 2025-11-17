@@ -54,6 +54,10 @@ class GehzeitberechnungDialog(QtWidgets.QDialog, FORM_CLASS):
 
         self.checkBox_nur_nicht_Grenzkataster.stateChanged.connect(self.on_checkbox_state_changed)  # enable/disable based on checkbox
 
+        self.groupBox_field_mapping.setVisible(False)   # hide field mapping container by default
+
+        self.checkBox_update_table.stateChanged.connect(self.toggle_mapping_visibility)
+
     def on_calculate_selected_clicked(self):
         """Emit custom signal when 'Berechnen' is clicked."""
         
@@ -67,3 +71,29 @@ class GehzeitberechnungDialog(QtWidgets.QDialog, FORM_CLASS):
         """Enable/disable the 'Alles berechnen' button."""
         is_checked = state == QtCore.Qt.Checked
         self.pushButton_calculate_all.setEnabled(is_checked)
+
+    def toggle_mapping_visibility(self):
+        """Show/hide field mapping controls based on checkbox."""
+        active = self.checkBox_update_table.isChecked()
+        self.groupBox_field_mapping.setVisible(active)
+
+    def build_dynamic_mapping_ui(self, field_mapping, layer):
+        """Dynamically build mapping UI rows based on self.field_mapping."""
+        form = self.formLayout_field_mapping
+        fields = layer.fields().names()
+
+        # Clear previous dynamic widgets
+        while form.rowCount() > 0:
+            form.removeRow(0)
+
+        self.mapping_dropdowns = {}
+
+        for api_field in field_mapping.keys():
+            label = QtWidgets.QLabel(api_field)
+            combo = QtWidgets.QComboBox()
+
+            combo.addItems(fields)
+
+            self.mapping_dropdowns[api_field] = combo
+
+            form.addRow(label, combo)

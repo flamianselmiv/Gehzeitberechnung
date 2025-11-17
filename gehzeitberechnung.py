@@ -242,7 +242,9 @@ class Gehzeitberechnung:
                 QMessageBox.warning(None, "Hinweis", "Keine ausgewählten Objekte gefunden.")
                 return
         else:
-            features = layer.getFeatures()
+            features = list(layer.getFeatures())
+
+        update_activated = self.dlg.checkBox_update_table.isChecked()
 
         layer.startEditing()
 
@@ -262,7 +264,7 @@ class Gehzeitberechnung:
                 print(f"Feature {fid}: API call failed")
                 continue
 
-            update_activated = self.dlg.checkBox_update_table.isChecked()
+            # update_activated = self.dlg.checkBox_update_table.isChecked()
 
             for field_name, field_info in self.field_mapping.items():
                 value = self.get_nested_value(result, field_info["path"].split('.'))
@@ -278,7 +280,13 @@ class Gehzeitberechnung:
 
                 print(f"{field_name}: {value}")
 
-                feature[field_name] = value
+                if update_activated:
+                    target_field = self.dlg.get_selected_target_field(field_name)
+
+                    if target_field and target_field in feature.fields().names():
+                        feature[target_field] = value
+                    else:
+                        print(f"No valid target field selected for '{field_name}'")
 
             if update_activated:
                 layer.updateFeature(feature)
@@ -287,8 +295,8 @@ class Gehzeitberechnung:
             print(f"Feature {fid} AFTER: {after_values}")
 
         layer.commitChanges()
-        QMessageBox.information(None, "Fertig", "Berechnung abgeschlossen.")
 
+        QMessageBox.information(None, "Fertig", "Berechnung abgeschlossen.")
 
     def run(self):
         """Run method that performs all the real work."""
@@ -298,6 +306,13 @@ class Gehzeitberechnung:
         # if self.first_start == True:
         #     self.first_start = False
         #     self.dlg = GehzeitberechnungDialog()
+
+        layer = self.iface.activeLayer()
+        if not layer:
+            QMessageBox.warning(None, "Fehler", "Bitte einen Layer auswählen.")
+            return
+
+        self.dlg.build_dynamic_mapping_ui(self.field_mapping, layer)
 
         # disconnect previous connections to avoid multiple triggers
         try:
