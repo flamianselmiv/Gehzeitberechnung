@@ -92,8 +92,47 @@ class GehzeitberechnungDialog(QtWidgets.QDialog, FORM_CLASS):
             label = QtWidgets.QLabel(api_field)
             combo = QtWidgets.QComboBox()
 
+            combo.addItem("Kein Update")
             combo.addItems(fields)
+            combo.setCurrentIndex(0)
 
             self.mapping_dropdowns[api_field] = combo
 
             form.addRow(label, combo)
+
+    def get_selected_target_field(self, api_field):
+        """Return the selected target field or None if 'Kein Update' is selected."""
+
+        combo = self.mapping_dropdowns.get(api_field)
+        if combo:
+            text = combo.currentText()
+
+            if text == "Kein Update":
+                return None
+            return text
+        return None # if no combo is found
+        
+    # def populate_mapping_dropdowns(self, layer, field_mapping):
+    #     """Fill mapping dropdowns with available fields and a no-update option,
+    #     as well as auto-selecting the matching target field, if it exists."""
+
+    #     layer_fields = layer.fields().names()
+
+    #     # helper function to fill one single combo box
+    #     def fill(combo, source_field_name): 
+    #         combo.clear()
+    #         combo.addItem("Kein Update")             
+    #         combo.addItems(layer_fields)
+
+    #         if source_field_name in layer_fields:
+    #             index = combo.findText(source_field_name)
+    #             if index >= 0:
+    #                 combo.setCurrentIndex(index)
+    #         else:
+    #             combo.setCurrentIndex(0)  
+                
+    #     for api_field_name in field_mapping.keys():
+    #         combo_attr_name = f"combo_target_{api_field_name}"
+    #         combo = getattr(self, combo_attr_name, None)
+    #         if combo:
+    #             fill(combo, api_field_name)

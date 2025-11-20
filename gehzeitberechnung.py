@@ -221,7 +221,7 @@ class Gehzeitberechnung:
         # print("Fields after update:")
         # for f in layer.fields():
         #     print(f" {f.name()} -> {f.typeName()}")
-
+    
     def calculate_features(self, only_selected=True):
         """Perform the hiking time calculation for selected or all features."""
 
@@ -285,6 +285,9 @@ class Gehzeitberechnung:
 
                     if target_field and target_field in feature.fields().names():
                         feature[target_field] = value
+                        print(f"UPDATE for '{field_name}'")
+                    elif target_field is None:
+                        print(f"No update for '{field_name}'")
                     else:
                         print(f"No valid target field selected for '{field_name}'")
 
