@@ -1,128 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>GehzeitberechnungDialogBase</class>
-    <widget class="QDialog" name="GehzeitberechnungDialogBase">
-        <property name="geometry">
-            <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>400</width>
-                <height>300</height>
-            </rect>
-        </property>
-        <property name="windowTitle">
-            <string>Gehzeitberechnung</string>
-        </property>
-
-        <widget class="QLabel" name="label_4">
-            <property name="geometry">
-                <rect>
-                    <x>20</x>
-                    <y>0</y>
-                    <width>371</width>
-                    <height>31</height>
-                </rect>
-            </property>
-            <property name="font">
-                <font>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                </font>
-            </property>
-            <property name="text">
-                <string>Lorem ipsum dolor sit amet</string>
-            </property>
-        </widget>
-
-        <!-- <widget class="QComboBox" name="comboBox">
-            <property name="geometry">
-                <rect>
-                    <x>40</x>
-                    <y>170</y>
-                    <width>341</width>
-                    <height>20</height>
-                </rect>
-            </property>
-        </widget> -->
-
-        <widget class="QLabel" name="label_5">
-            <property name="geometry">
-                <rect>
-                    <x>20</x>
-                    <y>20</y>
-                    <width>381</width>
-                    <height>51</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;consetetur sadipscing elitr, sed diam nonumy eirmod&lt;br/&gt; tempor invidunt ut labore et dolore magna aliquyam erat,&lt;br/&gt;sed diam voluptua&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-        </widget>
-
-        <widget class="QCheckBox" name="checkBox_nur_nicht_Grenzkataster">
-            <property name="geometry">
-                <rect>
-                    <x>20</x>
-                    <y>77</y>
-                    <width>371</width>
-                    <height>21</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Select all features of the current layer.</string>
-            </property>
-            <property name="tristate">
-                <bool>false</bool>
-            </property>
-        </widget>
-
-        <widget class="QWidget" name="button_container">
-            <property name="geometry">
-                <rect>
-                    <x>30</x>
-                    <y>240</y>
-                    <width>341</width>
-                    <height>32</height>
-                </rect>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_buttons">
-                <item>
-                    <widget class="QPushButton" name="pushButton_calculate_all">
-                        <property name="text">
-                            <string>Alles berechnen</string>
-                        </property>
-                    </widget>
-                </item>
-                <item>
-                    <widget class="QPushButton" name="pushButton_calculate_selected">
-                        <property name="text">
-                            <string>Berechnen</string>
-                        </property>
-                    </widget>
-                </item>
-                <item>
-                    <spacer name="horizontalSpacer">
-                        <property name="orientation">
-                            <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                            <size>
-                                <width>40</width>
-                                <height>20</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </item>
-                <item>
-                    <widget class="QPushButton" name="pushButton_cancel">
-                        <property name="text">
-                            <string>Abbrechen</string>
-                        </property>
-                    </widget>
-                </item>
-            </layout>
-        </widget>
-
-    </widget>
-
-    <resources/>
+ <class>GehzeitberechnungDialogBase</class>
+ <widget class="QDialog" name="GehzeitberechnungDialogBase">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>550</width>
+    <height>450</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>9</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Gehzeitberechnung</string>
+  </property>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>0</y>
+     <width>371</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Berechnung von Gehzeiten</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>30</y>
+     <width>481</width>
+     <height>60</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auf Basis der voibos Web-Services wird die Wegzeitberechnung für das ausgewählte&lt;br/&gt;oder alle Features zurückgegeben, und die Tabellen können damit aktualisiert werden.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_nur_nicht_Grenzkataster">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>90</y>
+     <width>371</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Alle Features des aktuellen Layers auswählen.</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_update_table">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>120</y>
+     <width>371</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Ergebnisse in Attributtabelle schreiben.</string>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_field_mapping">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>165</y>
+     <width>500</width>
+     <height>180</height>
+    </rect>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
+   <property name="title">
+    <string>Feldzuordnung</string>
+   </property>
+   <layout class="QFormLayout" name="formLayout_field_mapping">
+    <property name="labelAlignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_mapping_slope">
+      <property name="text">
+       <string>Steigung</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="combo_target_slope"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="button_container">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>380</y>
+     <width>481</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_buttons">
+    <item>
+     <widget class="QPushButton" name="pushButton_calculate_all">
+      <property name="text">
+       <string>Alles berechnen</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_calculate_selected">
+      <property name="text">
+       <string>Berechnen</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_cancel">
+      <property name="text">
+       <string>Abbrechen</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
 </ui>
