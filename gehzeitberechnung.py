@@ -8,8 +8,8 @@
                               -------------------
         begin                : 2025-08-13
         git sha              : $Format:%H$
-        copyright            : (C) 2025 by Dietmar Palmetzhofer, Flaminia Anselmi
-        email                : deitmar.palmetzhofer@vorarlberg.at, flaminia.anselmi@vorarlberg.at
+        copyright            : (C) 2025 by Flaminia Anselmi
+        email                : flaminia.anselmi@vorarlberg.at
  ***************************************************************************/
 
 /***************************************************************************
@@ -24,7 +24,7 @@
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, QVariant
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QMessageBox
-from qgis.core import QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsProject, QgsField, QgsWkbTypes
+from qgis.core import QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsProject, QgsField, QgsWkbTypes, QgsMessageLog, Qgis
 
 # Initialize Qt resources from file resSources.py
 from .resources import *
@@ -191,6 +191,9 @@ class Gehzeitberechnung:
                 action)
             self.iface.removeToolBarIcon(action)
 
+    def log(self, text):
+        QgsMessageLog.logMessage(text, "Gehzeitberechnung", Qgis.Info)
+    
     def get_nested_value(self, d, keys):
         for key in keys:
             if isinstance(d, dict):
@@ -250,10 +253,21 @@ class Gehzeitberechnung:
 
         for feature in features:
             fid = feature.id()
-            print(f"Processing feature {fid}")
+            # print(f"Processing feature {fid}")
+            self.log("=" * 60)
+            self.log(f"Feature ID: {fid}")
+            self.log("-" * 60)
 
             before_values = {field: feature[field] for field in self.field_mapping.keys() if field in feature.fields().names()}
-            print(f"Feature {fid} BEFORE: {before_values}")
+            # print(f"Feature {fid} BEFORE: {before_values}")
+            # self.log(f"Feature {fid} BEFORE: {before_values}")
+            self.log("Vor Berechnung:")
+
+            for k, v in before_values.items():
+                self.log(f"  • {k}: {v}")
+
+            # self.log("-" * 60)
+            # self.log("API-Ergebnisse:")
 
             geom = feature.geometry()
             geom.transform(QgsCoordinateTransform(layer.crs(), QgsCoordinateReferenceSystem(crs), QgsProject.instance()))
@@ -278,7 +292,8 @@ class Gehzeitberechnung:
                         print(f"Unknown field type {field_info['type']} for field {field_name}")
                         continue
 
-                print(f"{field_name}: {value}")
+                # print(f"{field_name}: {value}")
+                # self.log(f"  • {field_name}: {value}")
 
                 if update_activated:
                     target_field = self.dlg.get_selected_target_field(field_name)
@@ -295,7 +310,15 @@ class Gehzeitberechnung:
                 layer.updateFeature(feature)
 
             after_values = {field: feature[field] for field in self.field_mapping.keys() if field in feature.fields().names()}
-            print(f"Feature {fid} AFTER: {after_values}")
+            # print(f"Feature {fid} AFTER: {after_values}")
+            # self.log(f"Feature {fid} AFTER: {after_values}")
+            self.log("-" * 60)
+            self.log("Nach Berechnung:")
+            
+            for k, v in after_values.items():
+                self.log(f"  • {k}: {v}")
+
+            self.log("=" * 60 + "\n")
 
         layer.commitChanges()
 
