@@ -42,20 +42,20 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>30</y>
+     <y>40</y>
      <width>481</width>
      <height>60</height>
     </rect>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auf Basis der voibos Web-Services wird die Wegzeitberechnung für das ausgewählte&lt;br/&gt;oder alle Features zurückgegeben, und die Tabellen können damit aktualisiert werden.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auf Basis der voibos Web-Services wird die Wegzeitberechnung für das&lt;br/&gt;ausgewählte oder alle Features zurückgegeben, und die Tabellen können&lt;br/&gt;damit aktualisiert werden.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QCheckBox" name="checkBox_nur_nicht_Grenzkataster">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>90</y>
+     <y>110</y>
      <width>371</width>
      <height>25</height>
     </rect>
@@ -68,7 +68,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>120</y>
+     <y>140</y>
      <width>371</width>
      <height>25</height>
     </rect>
@@ -81,7 +81,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>165</y>
+     <y>185</y>
      <width>500</width>
      <height>180</height>
     </rect>
