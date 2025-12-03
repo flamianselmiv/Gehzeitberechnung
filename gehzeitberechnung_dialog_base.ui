@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>550</width>
-    <height>450</height>
+    <height>530</height>
    </rect>
   </property>
   <property name="font">
@@ -24,7 +24,7 @@
      <x>20</x>
      <y>0</y>
      <width>371</width>
-     <height>31</height>
+     <height>46</height>
     </rect>
    </property>
    <property name="font">
@@ -48,14 +48,14 @@
     </rect>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auf Basis der voibos Web-Services wird die Wegzeitberechnung für das&lt;br/&gt;ausgewählte oder alle Features zurückgegeben, und die Tabellen können&lt;br/&gt;damit aktualisiert werden.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auf Basis der voibos Web-Services wird die Wegzeitberechnung für das ausgewählte&lt;br/&gt;oder alle Features zurückgegeben, und die Tabellen können damit aktualisiert werden.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QCheckBox" name="checkBox_nur_nicht_Grenzkataster">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>110</y>
+     <y>100</y>
      <width>371</width>
      <height>25</height>
     </rect>
@@ -68,7 +68,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>140</y>
+     <y>130</y>
      <width>371</width>
      <height>25</height>
     </rect>
@@ -83,7 +83,7 @@
      <x>20</x>
      <y>185</y>
      <width>500</width>
-     <height>180</height>
+     <height>250</height>
     </rect>
    </property>
    <property name="visible">
@@ -93,16 +93,16 @@
     <string>Feldzuordnung</string>
    </property>
    <layout class="QFormLayout" name="formLayout_field_mapping">
-    <property name="labelAlignment">
+    <!-- <property name="labelAlignment">
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-    </property>
-    <item row="0" column="0">
+    </property> -->
+    <!-- <item row="0" column="0">
      <widget class="QLabel" name="label_mapping_slope">
       <property name="text">
        <string>Steigung</string>
       </property>
      </widget>
-    </item>
+    </item> -->
     <item row="0" column="1">
      <widget class="QComboBox" name="combo_target_slope"/>
     </item>
@@ -112,7 +112,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>380</y>
+     <y>470</y>
      <width>481</width>
      <height>40</height>
     </rect>

@@ -320,8 +320,8 @@ class Gehzeitberechnung:
             for k, v in before_values.items():
                 self.log(f"  • {k}: {v}")
 
-            # self.log("-" * 60)
-            # self.log("API-Ergebnisse:")
+            self.log("-" * 60)
+            self.log("API-Ergebnisse:")
 
             geom = feature.geometry()
             geom.transform(QgsCoordinateTransform(layer.crs(), QgsCoordinateReferenceSystem(crs), QgsProject.instance()))
@@ -347,7 +347,7 @@ class Gehzeitberechnung:
                         continue
 
                 # print(f"{field_name}: {value}")
-                # self.log(f"  • {field_name}: {value}")
+                self.log(f"  • {field_name}: {value}")
 
                 if update_activated:
                     target_field = self.dlg.get_selected_target_field(field_name)
