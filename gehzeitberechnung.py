@@ -33,6 +33,12 @@ from .gehzeitberechnung_dialog import GehzeitberechnungDialog
 import os.path
 from .api import fetch_hiking_data
 
+QVARIANT_TO_STR = {
+    QVariant.Int: "integer",
+    QVariant.LongLong: "integer",
+    QVariant.Double: "double",
+}
+
 class Gehzeitberechnung:
     """QGIS Plugin Implementation."""
 
@@ -193,7 +199,55 @@ class Gehzeitberechnung:
 
     def log(self, text):
         QgsMessageLog.logMessage(text, "Gehzeitberechnung", Qgis.Info)
-    
+
+    def validate_field_mapping(self, api_field, combo):
+        selected = combo.currentText()
+
+        if selected == "Kein Update":   # always valid
+            return
+        
+        layer = self.iface.activeLayer()
+        if not layer:
+            return
+
+        required_type = self.field_mapping[api_field]["type"]
+
+        idx = layer.fields().indexOf(selected)
+        qgs_field = layer.fields().field(idx)
+        actual_type = qgs_field.type()
+
+        actual_type_str = QVARIANT_TO_STR.get(actual_type, f"Unbekannt ({actual_type})")
+
+        if actual_type == QVariant.Double:
+            target_type = "double"
+        elif actual_type in (QVariant.Int, QVariant.LongLong):
+            target_type = "integer"
+        else:
+            QMessageBox.warning(
+                None,
+                "Ungültiger Typ",
+                f"Das Feld {selected} hat einen nicht unterstützten Typ.\n"
+            )
+            combo.setCurrentText("Kein Update")
+            return
+
+        compatible = (
+            (required_type == "integer" and target_type in ("integer", "double")) or
+            (required_type == "double" and target_type == "double")
+        )
+
+        if not compatible:
+            QMessageBox.warning(
+                None,
+                "Ungültige Feldzuordnung",
+                (
+                    f"Das Zielfeld {selected} ist vom Typ {actual_type_str}, "
+                    f"aber {api_field} benötigt {required_type}.\n\n"
+                    "Dies würde zu Datenverlust führen. Die Auswahl wurde zurückgesetzt."
+                )
+            )
+            combo.setCurrentText("Kein Update")
+
     def get_nested_value(self, d, keys):
         for key in keys:
             if isinstance(d, dict):
@@ -266,8 +320,8 @@ class Gehzeitberechnung:
             for k, v in before_values.items():
                 self.log(f"  • {k}: {v}")
 
-            # self.log("-" * 60)
-            # self.log("API-Ergebnisse:")
+            self.log("-" * 60)
+            self.log("API-Ergebnisse:")
 
             geom = feature.geometry()
             geom.transform(QgsCoordinateTransform(layer.crs(), QgsCoordinateReferenceSystem(crs), QgsProject.instance()))
@@ -293,7 +347,7 @@ class Gehzeitberechnung:
                         continue
 
                 # print(f"{field_name}: {value}")
-                # self.log(f"  • {field_name}: {value}")
+                self.log(f"  • {field_name}: {value}")
 
                 if update_activated:
                     target_field = self.dlg.get_selected_target_field(field_name)
@@ -338,7 +392,7 @@ class Gehzeitberechnung:
             QMessageBox.warning(None, "Fehler", "Bitte einen Layer auswählen.")
             return
 
-        self.dlg.build_dynamic_mapping_ui(self.field_mapping, layer)
+        self.dlg.build_dynamic_mapping_ui(self.field_mapping, layer, self)
 
         # disconnect previous connections to avoid multiple triggers
         try:
