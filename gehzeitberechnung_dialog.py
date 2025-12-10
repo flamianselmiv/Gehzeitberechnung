@@ -8,8 +8,8 @@
                              -------------------
         begin                : 2025-08-13
         git sha              : $Format:%H$
-        copyright            : (C) 2025 by Dietmar Palmetzhofer, Flaminia Anselmi
-        email                : deitmar.palmetzhofer@vorarlberg.at, flaminia.anselmi@vorarlberg.at
+        copyright            : (C) 2025 by Flaminia Anselmi
+        email                : flaminia.anselmi@vorarlberg.at
  ***************************************************************************/
 
 /***************************************************************************
@@ -77,7 +77,7 @@ class GehzeitberechnungDialog(QtWidgets.QDialog, FORM_CLASS):
         active = self.checkBox_update_table.isChecked()
         self.groupBox_field_mapping.setVisible(active)
 
-    def build_dynamic_mapping_ui(self, field_mapping, layer):
+    def build_dynamic_mapping_ui(self, field_mapping, layer, plugin_instance):
         """Dynamically build mapping UI rows based on self.field_mapping."""
         form = self.formLayout_field_mapping
         fields = layer.fields().names()
@@ -100,8 +100,13 @@ class GehzeitberechnungDialog(QtWidgets.QDialog, FORM_CLASS):
             else:
                 combo.setCurrentText("Kein Update")
 
-            self.mapping_dropdowns[api_field] = combo
+            # Validation
+            combo.currentIndexChanged.connect(
+                lambda _, api_field=api_field, combo=combo:
+                    plugin_instance.validate_field_mapping(api_field, combo)
+            )
 
+            self.mapping_dropdowns[api_field] = combo
             form.addRow(label, combo)
 
     def get_selected_target_field(self, api_field):

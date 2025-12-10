@@ -8,8 +8,8 @@
                               -------------------
         begin                : 2025-08-13
         git sha              : $Format:%H$
-        copyright            : (C) 2025 by Dietmar Palmetzhofer, Flaminia Anselmi
-        email                : deitmar.palmetzhofer@vorarlberg.at, flaminia.anselmi@vorarlberg.at
+        copyright            : (C) 2025 by Flaminia Anselmi
+        email                : flaminia.anselmi@vorarlberg.at
  ***************************************************************************/
 
 /***************************************************************************
@@ -24,7 +24,7 @@
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, QVariant
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QMessageBox
-from qgis.core import QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsProject, QgsField, QgsWkbTypes
+from qgis.core import QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsProject, QgsField, QgsWkbTypes, QgsMessageLog, Qgis
 
 # Initialize Qt resources from file resSources.py
 from .resources import *
@@ -32,6 +32,12 @@ from .resources import *
 from .gehzeitberechnung_dialog import GehzeitberechnungDialog
 import os.path
 from .api import fetch_hiking_data
+
+QVARIANT_TO_STR = {
+    QVariant.Int: "integer",
+    QVariant.LongLong: "integer",
+    QVariant.Double: "double",
+}
 
 class Gehzeitberechnung:
     """QGIS Plugin Implementation."""
@@ -191,6 +197,57 @@ class Gehzeitberechnung:
                 action)
             self.iface.removeToolBarIcon(action)
 
+    def log(self, text):
+        QgsMessageLog.logMessage(text, "Gehzeitberechnung", Qgis.Info)
+
+    def validate_field_mapping(self, api_field, combo):
+        selected = combo.currentText()
+
+        if selected == "Kein Update":   # always valid
+            return
+        
+        layer = self.iface.activeLayer()
+        if not layer:
+            return
+
+        required_type = self.field_mapping[api_field]["type"]
+
+        idx = layer.fields().indexOf(selected)
+        qgs_field = layer.fields().field(idx)
+        actual_type = qgs_field.type()
+
+        actual_type_str = QVARIANT_TO_STR.get(actual_type, f"Unbekannt ({actual_type})")
+
+        if actual_type == QVariant.Double:
+            target_type = "double"
+        elif actual_type in (QVariant.Int, QVariant.LongLong):
+            target_type = "integer"
+        else:
+            QMessageBox.warning(
+                None,
+                "Ungültiger Typ",
+                f"Das Feld {selected} hat einen nicht unterstützten Typ.\n"
+            )
+            combo.setCurrentText("Kein Update")
+            return
+
+        compatible = (
+            (required_type == "integer" and target_type in ("integer", "double")) or
+            (required_type == "double" and target_type == "double")
+        )
+
+        if not compatible:
+            QMessageBox.warning(
+                None,
+                "Ungültige Feldzuordnung",
+                (
+                    f"Das Zielfeld {selected} ist vom Typ {actual_type_str}, "
+                    f"aber {api_field} benötigt {required_type}.\n\n"
+                    "Dies würde zu Datenverlust führen. Die Auswahl wurde zurückgesetzt."
+                )
+            )
+            combo.setCurrentText("Kein Update")
+
     def get_nested_value(self, d, keys):
         for key in keys:
             if isinstance(d, dict):
@@ -250,10 +307,21 @@ class Gehzeitberechnung:
 
         for feature in features:
             fid = feature.id()
-            print(f"Processing feature {fid}")
+            # print(f"Processing feature {fid}")
+            self.log("=" * 60)
+            self.log(f"Feature ID: {fid}")
+            self.log("-" * 60)
 
             before_values = {field: feature[field] for field in self.field_mapping.keys() if field in feature.fields().names()}
-            print(f"Feature {fid} BEFORE: {before_values}")
+            # print(f"Feature {fid} BEFORE: {before_values}")
+            # self.log(f"Feature {fid} BEFORE: {before_values}")
+            self.log("Vor Berechnung:")
+
+            for k, v in before_values.items():
+                self.log(f"  • {k}: {v}")
+
+            self.log("-" * 60)
+            self.log("API-Ergebnisse:")
 
             geom = feature.geometry()
             geom.transform(QgsCoordinateTransform(layer.crs(), QgsCoordinateReferenceSystem(crs), QgsProject.instance()))
@@ -278,7 +346,8 @@ class Gehzeitberechnung:
                         print(f"Unknown field type {field_info['type']} for field {field_name}")
                         continue
 
-                print(f"{field_name}: {value}")
+                # print(f"{field_name}: {value}")
+                self.log(f"  • {field_name}: {value}")
 
                 if update_activated:
                     target_field = self.dlg.get_selected_target_field(field_name)
@@ -295,7 +364,15 @@ class Gehzeitberechnung:
                 layer.updateFeature(feature)
 
             after_values = {field: feature[field] for field in self.field_mapping.keys() if field in feature.fields().names()}
-            print(f"Feature {fid} AFTER: {after_values}")
+            # print(f"Feature {fid} AFTER: {after_values}")
+            # self.log(f"Feature {fid} AFTER: {after_values}")
+            self.log("-" * 60)
+            self.log("Nach Berechnung:")
+            
+            for k, v in after_values.items():
+                self.log(f"  • {k}: {v}")
+
+            self.log("=" * 60 + "\n")
 
         layer.commitChanges()
 
@@ -315,7 +392,7 @@ class Gehzeitberechnung:
             QMessageBox.warning(None, "Fehler", "Bitte einen Layer auswählen.")
             return
 
-        self.dlg.build_dynamic_mapping_ui(self.field_mapping, layer)
+        self.dlg.build_dynamic_mapping_ui(self.field_mapping, layer, self)
 
         # disconnect previous connections to avoid multiple triggers
         try:
