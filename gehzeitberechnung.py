@@ -34,9 +34,12 @@ import os.path
 from .api import fetch_hiking_data
 
 QVARIANT_TO_STR = {
+    QVariant.Invalid: "invalid",
+    QVariant.Bool: "boolean",
     QVariant.Int: "integer",
     QVariant.LongLong: "integer",
     QVariant.Double: "double",
+    QVariant.String: "string",
 }
 
 class Gehzeitberechnung:
@@ -198,9 +201,11 @@ class Gehzeitberechnung:
             self.iface.removeToolBarIcon(action)
 
     def log(self, text):
+        """Log message to QGIS message log."""
         QgsMessageLog.logMessage(text, "Gehzeitberechnung", Qgis.Info)
 
     def validate_field_mapping(self, api_field, combo):
+        """Validate the selected target field for the given api_field."""
         selected = combo.currentText()
 
         if selected == "Kein Update":   # always valid
@@ -226,7 +231,9 @@ class Gehzeitberechnung:
             QMessageBox.warning(
                 None,
                 "Ungültiger Typ",
-                f"Das Feld {selected} hat einen nicht unterstützten Typ.\n"
+                f"Das Zielfeld {selected} ist vom Typ {actual_type_str}, "
+                "hier kann kein Wert aus der API gespeichert werden."
+
             )
             combo.setCurrentText("Kein Update")
             return
@@ -249,35 +256,13 @@ class Gehzeitberechnung:
             combo.setCurrentText("Kein Update")
 
     def get_nested_value(self, d, keys):
+        """Get nested value from dict d using list of keys."""
         for key in keys:
             if isinstance(d, dict):
                 d = d.get(key, None)
             else:
                 return None
         return d
-
-    def add_missing_fields(self, layer):
-        layer.startEditing()
-        for field_name, field_info in self.field_mapping.items():
-            # exists = layer.fields().indexFromName(field_name) != -1
-            # print(f"Field {field_name} exists? {exists}")
-
-            if layer.fields().indexFromName(field_name) == -1:
-                field_type = field_info.get("type", "string")
-
-                if field_type == "double":
-                    qvariant_type = QVariant.Double
-                elif field_type == "integer":
-                    qvariant_type = QVariant.Int
-
-                new_field = QgsField(field_name, qvariant_type)
-                layer.dataProvider().addAttributes([new_field])
-        layer.updateFields()
-        layer.commitChanges()
-
-        # print("Fields after update:")
-        # for f in layer.fields():
-        #     print(f" {f.name()} -> {f.typeName()}")
     
     def calculate_features(self, only_selected=True):
         """Perform the hiking time calculation for selected or all features."""
@@ -290,8 +275,6 @@ class Gehzeitberechnung:
         if not layer or layer.geometryType() != QgsWkbTypes.LineGeometry:
             QMessageBox.warning(None, "Fehler", "Bitte eine Linien-Layer auswählen.")
             return
-
-        self.add_missing_fields(layer)
 
         if only_selected:
             features = layer.selectedFeatures()
@@ -307,14 +290,11 @@ class Gehzeitberechnung:
 
         for feature in features:
             fid = feature.id()
-            # print(f"Processing feature {fid}")
             self.log("=" * 60)
             self.log(f"Feature ID: {fid}")
             self.log("-" * 60)
 
             before_values = {field: feature[field] for field in self.field_mapping.keys() if field in feature.fields().names()}
-            # print(f"Feature {fid} BEFORE: {before_values}")
-            # self.log(f"Feature {fid} BEFORE: {before_values}")
             self.log("Vor Berechnung:")
 
             for k, v in before_values.items():
@@ -332,8 +312,6 @@ class Gehzeitberechnung:
                 print(f"Feature {fid}: API call failed")
                 continue
 
-            # update_activated = self.dlg.checkBox_update_table.isChecked()
-
             for field_name, field_info in self.field_mapping.items():
                 value = self.get_nested_value(result, field_info["path"].split('.'))
 
@@ -346,7 +324,6 @@ class Gehzeitberechnung:
                         print(f"Unknown field type {field_info['type']} for field {field_name}")
                         continue
 
-                # print(f"{field_name}: {value}")
                 self.log(f"  • {field_name}: {value}")
 
                 if update_activated:
@@ -354,18 +331,11 @@ class Gehzeitberechnung:
 
                     if target_field and target_field in feature.fields().names():
                         feature[target_field] = value
-                        print(f"UPDATE for '{field_name}'")
-                    elif target_field is None:
-                        print(f"No update for '{field_name}'")
-                    else:
-                        print(f"No valid target field selected for '{field_name}'")
 
             if update_activated:
                 layer.updateFeature(feature)
 
             after_values = {field: feature[field] for field in self.field_mapping.keys() if field in feature.fields().names()}
-            # print(f"Feature {fid} AFTER: {after_values}")
-            # self.log(f"Feature {fid} AFTER: {after_values}")
             self.log("-" * 60)
             self.log("Nach Berechnung:")
             
@@ -383,9 +353,6 @@ class Gehzeitberechnung:
 
         # Create the dialog with elements (after translation) and keep reference
         # Only create GUI ONCE in callback, so that it will only load when the plugin is started
-        # if self.first_start == True:
-        #     self.first_start = False
-        #     self.dlg = GehzeitberechnungDialog()
 
         layer = self.iface.activeLayer()
         if not layer:

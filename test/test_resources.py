@@ -8,9 +8,9 @@
 
 """
 
-__author__ = 'deitmar.palmetzhofer@vorarlberg.at, flaminia.anselmi@vorarlberg.at'
+__author__ = 'flaminia.anselmi@vorarlberg.at'
 __date__ = '2025-08-13'
-__copyright__ = 'Copyright 2025, Dietmar Palmetzhofer, Flaminia Anselmi'
+__copyright__ = 'Copyright 2025, Flaminia Anselmi'
 
 import unittest
 

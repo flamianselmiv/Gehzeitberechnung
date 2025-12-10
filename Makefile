@@ -5,8 +5,8 @@
 #							 -------------------
 #		begin				: 2025-08-13
 #		git sha				: $Format:%H$
-#		copyright			: (C) 2025 by Dietmar Palmetzhofer, Flaminia Anselmi
-#		email				: deitmar.palmetzhofer@vorarlberg.at, flaminia.anselmi@vorarlberg.at
+#		copyright			: (C) 2025 by Flaminia Anselmi
+#		email				: flaminia.anselmi@vorarlberg.at
 # ***************************************************************************/
 #
 #/***************************************************************************

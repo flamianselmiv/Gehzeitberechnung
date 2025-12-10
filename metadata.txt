@@ -5,12 +5,12 @@
 [general]
 name=Gehzeitberechnung
 qgisMinimumVersion=3.0
-description=This plugin calculates the walking time
+description=Dieses Plugin berechnet die Gehzeit
 version=0.1
-author=Dietmar Palmetzhofer, Flaminia Anselmi
-email=deitmar.palmetzhofer@vorarlberg.at, flaminia.anselmi@vorarlberg.at
+author=Flaminia Anselmi
+email=flaminia.anselmi@vorarlberg.at
 
-about=This plugin calculates the walking time.
+about=Auf Basis der voibos Web-Services wird die Wegzeitberechnung für das ausgewählte oder alle Features zurückgegeben, und die Tabellen können damit aktualisiert werden. Mehr Informationen über die Voibos Gehzeitberechnung-Anwendung: https://www.geoland.at/site/geoservices.html.
 
 tracker=http://bugs
 repository=http://repo
