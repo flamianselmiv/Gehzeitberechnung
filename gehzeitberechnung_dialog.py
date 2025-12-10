@@ -59,8 +59,7 @@ class GehzeitberechnungDialog(QtWidgets.QDialog, FORM_CLASS):
         self.checkBox_update_table.stateChanged.connect(self.toggle_mapping_visibility)
 
     def on_calculate_selected_clicked(self):
-        """Emit custom signal when 'Berechnen' is clicked."""
-        
+        """Emit signal when 'Berechnen' is clicked."""
         self.calculate_selected_clicked.emit()
 
     def on_calculate_all_clicked(self):
@@ -111,7 +110,6 @@ class GehzeitberechnungDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def get_selected_target_field(self, api_field):
         """Return the selected target field or None if 'Kein Update' is selected."""
-
         combo = self.mapping_dropdowns.get(api_field)
         if combo:
             text = combo.currentText()
