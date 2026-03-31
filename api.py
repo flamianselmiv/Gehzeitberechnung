@@ -34,7 +34,8 @@ def fetch_hiking_data(wkt_text, crs, method, url, timeout=30):
     # Get the QGIS network manager instance
     nam = QgsNetworkAccessManager.instance()
     request = QNetworkRequest(QUrl(url))
-    request.setHeader(QNetworkRequest.ContentTypeHeader, "application/json")
+    # request.setHeader(QNetworkRequest.ContentTypeHeader, "application/json")
+    request.setHeader(QNetworkRequest.KnownHeaders.ContentTypeHeader, "application/json")
 
     # Start timing
     start_time = time.time()
@@ -47,13 +48,14 @@ def fetch_hiking_data(wkt_text, crs, method, url, timeout=30):
     # use async instead?
     loop = QEventLoop()
     reply.finished.connect(loop.quit)
-    loop.exec_()
+    # loop.exec_()
+    loop.exec()
 
     elapsed = time.time() - start_time
     print(f"Response received in {elapsed:.2f} seconds")
 
     # Check for errors
-    if reply.error() != QNetworkReply.NoError:
+    if reply.error() != QNetworkReply.NetworkError.NoError:
         logging.error(f"Network error after {elapsed:.2f}s: {reply.errorString()}")
         reply.deleteLater()
         return None
