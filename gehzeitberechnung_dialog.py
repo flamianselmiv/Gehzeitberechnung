@@ -68,7 +68,8 @@ class GehzeitberechnungDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def on_checkbox_state_changed(self, state):
         """Enable/disable the 'Alles berechnen' button."""
-        is_checked = state == QtCore.Qt.Checked
+        # is_checked = state == QtCore.Qt.Checked
+        is_checked = state == QtCore.Qt.CheckState.Checked
         self.pushButton_calculate_all.setEnabled(is_checked)
 
     def toggle_mapping_visibility(self):
