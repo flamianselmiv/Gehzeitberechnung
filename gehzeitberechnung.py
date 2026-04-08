@@ -371,8 +371,8 @@ class Gehzeitberechnung:
         except Exception:
             pass
 
-        self.dlg.calculate_selected_clicked.connect(lambda: self.calculate_features(only_selected=True))
-        self.dlg.calculate_all_clicked.connect(lambda: self.calculate_features(only_selected=False))
+        self.dlg.calculate_selected_clicked.connect(lambda: (self.calculate_features(only_selected=True), self.dlg.accept()))
+        self.dlg.calculate_all_clicked.connect(lambda: (self.calculate_features(only_selected=False), self.dlg.accept()))
 
         # show the dialog
         self.dlg.show()
