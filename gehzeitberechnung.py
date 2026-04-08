@@ -346,7 +346,10 @@ class Gehzeitberechnung:
 
         layer.commitChanges()
 
-        QMessageBox.information(None, "Fertig", "Berechnung abgeschlossen.")
+        QMessageBox.information(None, "Fertig", 
+                                "Berechnung abgeschlossen.\n\n"
+                                "Die Ergebnisse finden Sie im Protokollfenster unter:\n"
+                                "Ansicht → Bedienfelder → Protokoll → Gehzeitberechnung")
 
     def run(self):
         """Run method that performs all the real work."""
