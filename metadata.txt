@@ -4,8 +4,8 @@
 
 [general]
 name=Gehzeitberechnung
-# qgisMinimumVersion=3.0
-qgisMinimumVersion=4.0
+qgisMinimumVersion=3.0
+# TODO QGIS4: qgisMinimumVersion=4.0
 description=Dieses Plugin berechnet die Gehzeit
 version=0.1
 author=Flaminia Anselmi
