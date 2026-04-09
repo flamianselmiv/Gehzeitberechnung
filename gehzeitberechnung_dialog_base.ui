@@ -90,7 +90,7 @@
     <bool>false</bool>
    </property>
    <property name="title">
-    <string>Feldzuordnung</string>
+    <string>Feldzuordnung (API-Attribut → Layer-Attribut)</string>
    </property>
    <layout class="QFormLayout" name="formLayout_field_mapping">
     <item row="0" column="1">
