@@ -14,7 +14,7 @@ email=flaminia.anselmi@vorarlberg.at
 about=Auf Basis der voibos Web-Services wird die Wegzeitberechnung für das ausgewählte oder alle Features zurückgegeben, und die Tabellen können damit aktualisiert werden. Mehr Informationen über die Voibos Gehzeitberechnung-Anwendung: https://www.geoland.at/site/geoservices.html.
 
 #tracker=http://bugs
-#repository=http://repo
+repository=https://github.com/flamianselmiv/Gehzeitberechnung
 # End of mandatory metadata
 
 # Recommended items:
