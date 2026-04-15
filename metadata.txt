@@ -26,7 +26,7 @@ hasProcessingProvider=no
 # Tags are comma separated with spaces allowed
 tags=voibos, geoland, geoservices, gehzeitberechnung, lvg
 
-homepage=https://vorarlberg.at/-/landesamt-fuer-vermessung-und-geoinformation-l-1
+homepage=https://github.com/flamianselmiv/Gehzeitberechnung/blob/main/README.md
 category=Plugins
 icon=icon.png
 # experimental flag
